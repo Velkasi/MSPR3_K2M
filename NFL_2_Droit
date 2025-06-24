@@ -1,0 +1,56 @@
+### Création des utilisateurs
+
+--Administrateur
+CREATE USER admin_nester WITH PASSWORD 'Admin!';
+-- Lecture seule
+CREATE USER lecteur_nester WITH PASSWORD 'Lecture!';
+--Lecture/écriture
+CREATE USER redacteur_nester WITH PASSWORD 'Lecture.Ecriture!';
+
+
+### **Création de SCHEMA (Explication en bas de page)**
+
+CREATE SCHEMA IF NOT EXISTS core;
+CREATE SCHEMA IF NOT EXISTS nfl_schema;
+CREATE SCHEMA IF NOT EXISTS client_a;
+CREATE SCHEMA IF NOT EXISTS client_b;
+
+
+### Droits pour l’administrateur
+
+--Accès complet à la base
+GRANT ALL PRIVILEGES ON DATABASE NFL TO admin_nester;
+
+--Accès total aux schémas
+GRANT ALL PRIVILEGES ON SCHEMA core, nfl_schema, client_a, client_b TO admin_nester;
+
+--Accès à tous les objets dans tous les schémas
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA core, nfl_schema, client_a, client_b TO admin_nester;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA core, nfl_schema, client_a, client_b TO admin_nester;
+
+
+### Droits pour l’utilisateur avec lecture seule
+
+--Connexion autorisée
+GRANT CONNECT ON DATABASE NFL TO lecteur_nester;
+
+--Autoriser l'accès aux schémas
+GRANT USAGE ON SCHEMA core, nfl_schema, client_a, client_b TO lecteur_nester;
+
+--Lecture seule sur toutes les tables
+GRANT SELECT ON ALL TABLES IN SCHEMA core, nfl_schema, client_a, client_b TO lecteur_nester;
+
+
+### Droits pour l’utilisateur lecture/écriture
+
+--Connexion autorisée
+GRANT CONNECT ON DATABASE NFL TO redacteur_nester;
+
+--Autoriser l'accès aux schémas
+GRANT USAGE ON SCHEMA core, nfl_schema, client_a, client_b TO redacteur_nester;
+
+--Lecture et modification des données
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA core, nfl_schema, client_a, client_b TO redacteur_nester;
+
+--Droit d'utiliser les séquences (pour les ID auto-incrémentés)
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA core, nfl_schema, client_a, client_b TO redacteur_nester;
