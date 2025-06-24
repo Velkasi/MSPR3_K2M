@@ -53,6 +53,24 @@ CREATE TABLE core_2.adresse (
    PRIMARY KEY(Id_ADRESSE)
 );
 
+-- Schéma : client_a_2
+CREATE TABLE client_a_2.client (
+   Id_Personne INTEGER,
+   AdresseMail_client VARCHAR(50),
+   PRIMARY KEY(Id_Personne),
+   FOREIGN KEY(Id_Personne) REFERENCES core_2.personne(Id_Personne)
+);
+
+CREATE TABLE client_a_2.prestataire (
+   Id_Personne INTEGER,
+   Nom_societe VARCHAR(100),
+   SIRET NUMERIC(20,0),
+   Id_ADRESSE INTEGER NOT NULL,
+   PRIMARY KEY(Id_Personne),
+   FOREIGN KEY(Id_Personne) REFERENCES core_2.personne(Id_Personne),
+   FOREIGN KEY(Id_ADRESSE) REFERENCES core_2.adresse(Id_ADRESSE)
+);
+
 -- Schéma : nfl_schema_2
 CREATE TABLE nfl_schema_2.franchise (
    Id_FRANCHISE SERIAL,
@@ -62,6 +80,15 @@ CREATE TABLE nfl_schema_2.franchise (
    FOREIGN KEY(Id_ADRESSE) REFERENCES core_2.adresse(Id_ADRESSE)
 );
 
+CREATE TABLE nfl_schema_2.fait_parti (
+   Id_FRANCHISE INTEGER,
+   Id_Personne INTEGER,
+   PRIMARY KEY(Id_FRANCHISE, Id_Personne),
+   FOREIGN KEY(Id_FRANCHISE) REFERENCES nfl_schema_2.franchise(Id_FRANCHISE),
+   FOREIGN KEY(Id_Personne) REFERENCES client_a_2.client(Id_Personne)
+);
+
+-- Collectes
 CREATE TABLE nfl_schema_2.info_collecte (
    Id_INFO_COLLECTE SERIAL,
    Adresse_MAC VARCHAR(50),
@@ -97,14 +124,6 @@ CREATE TABLE nfl_schema_2.date_collecte (
    FOREIGN KEY(Id_Personne) REFERENCES core_2.personne(Id_Personne)
 );
 
-CREATE TABLE nfl_schema_2.fait_parti (
-   Id_FRANCHISE INTEGER,
-   Id_Personne INTEGER,
-   PRIMARY KEY(Id_FRANCHISE, Id_Personne),
-   FOREIGN KEY(Id_FRANCHISE) REFERENCES nfl_schema_2.franchise(Id_FRANCHISE),
-   FOREIGN KEY(Id_Personne) REFERENCES client_a_2.client(Id_Personne)
-);
-
 CREATE TABLE nfl_schema_2.contient_type (
    Id_INFO_COLLECTE INTEGER,
    Id_TYPE_DISQUES INTEGER,
@@ -126,83 +145,6 @@ CREATE TABLE nfl_schema_2.contient_ram (
    Id_TYPE_RAM INTEGER,
    PRIMARY KEY(Id_INFO_COLLECTE, Id_TYPE_RAM),
    FOREIGN KEY(Id_INFO_COLLECTE) REFERENCES nfl_schema_2.info_collecte(Id_INFO_COLLECTE),
-   FOREIGN KEY(Id_TYPE_RAM) REFERENCES core_2.type_ram(Id_TYPE_RAM)
-);
-
--- Schéma : client_a_2
-CREATE TABLE client_a_2.client (
-   Id_Personne INTEGER,
-   AdresseMail_client VARCHAR(50),
-   PRIMARY KEY(Id_Personne),
-   FOREIGN KEY(Id_Personne) REFERENCES core_2.personne(Id_Personne)
-);
-
-CREATE TABLE client_a_2.prestataire (
-   Id_Personne INTEGER,
-   Nom_societe VARCHAR(100),
-   SIRET NUMERIC(20,0),
-   Id_ADRESSE INTEGER NOT NULL,
-   PRIMARY KEY(Id_Personne),
-   FOREIGN KEY(Id_Personne) REFERENCES core_2.personne(Id_Personne),
-   FOREIGN KEY(Id_ADRESSE) REFERENCES core_2.adresse(Id_ADRESSE)
-);
-
-CREATE TABLE client_a_2.info_collecte (
-   Id_INFO_COLLECTE SERIAL,
-   Adresse_MAC VARCHAR(50),
-   Etat_instance BOOLEAN,
-   Adresse_ip_client VARCHAR(50),
-   CPU_Client VARCHAR(50),
-   Adresse_ip_instance VARCHAR(50),
-   NB_Requete_client VARCHAR(50),
-   Id_TYPE_OS INTEGER NOT NULL,
-   Id_TECHNICIEN INTEGER NOT NULL,
-   PRIMARY KEY(Id_INFO_COLLECTE),
-   UNIQUE(Id_TYPE_OS),
-   FOREIGN KEY(Id_TYPE_OS) REFERENCES core_2.type_os(Id_TYPE_OS),
-   FOREIGN KEY(Id_TECHNICIEN) REFERENCES core_2.technicien(Id_TECHNICIEN)
-);
-
-CREATE TABLE client_a_2.date_collecte (
-   Id_Date_collecte SERIAL,
-   Id_INFO_COLLECTE INTEGER NOT NULL,
-   Id_Personne INTEGER NOT NULL,
-   PRIMARY KEY(Id_Date_collecte),
-   FOREIGN KEY(Id_INFO_COLLECTE) REFERENCES client_a_2.info_collecte(Id_INFO_COLLECTE),
-   FOREIGN KEY(Id_Personne) REFERENCES core_2.personne(Id_Personne)
-);
-
-CREATE TABLE client_a_2.licence (
-   Id_LICENCE SERIAL,
-   Numero_licences SMALLINT,
-   Id_APPLICATION INTEGER NOT NULL,
-   Id_INFO_COLLECTE INTEGER NOT NULL,
-   PRIMARY KEY(Id_LICENCE),
-   FOREIGN KEY(Id_APPLICATION) REFERENCES core_2.application(Id_APPLICATION),
-   FOREIGN KEY(Id_INFO_COLLECTE) REFERENCES client_a_2.info_collecte(Id_INFO_COLLECTE)
-);
-
-CREATE TABLE client_a_2.contient_type (
-   Id_INFO_COLLECTE INTEGER,
-   Id_TYPE_DISQUES INTEGER,
-   PRIMARY KEY(Id_INFO_COLLECTE, Id_TYPE_DISQUES),
-   FOREIGN KEY(Id_INFO_COLLECTE) REFERENCES client_a_2.info_collecte(Id_INFO_COLLECTE),
-   FOREIGN KEY(Id_TYPE_DISQUES) REFERENCES core_2.type_disques(Id_TYPE_DISQUES)
-);
-
-CREATE TABLE client_a_2.contient_taille (
-   Id_INFO_COLLECTE INTEGER,
-   Id_TAILLE_DISQUES INTEGER,
-   PRIMARY KEY(Id_INFO_COLLECTE, Id_TAILLE_DISQUES),
-   FOREIGN KEY(Id_INFO_COLLECTE) REFERENCES client_a_2.info_collecte(Id_INFO_COLLECTE),
-   FOREIGN KEY(Id_TAILLE_DISQUES) REFERENCES core_2.taille_disques(Id_TAILLE_DISQUES)
-);
-
-CREATE TABLE client_a_2.contient_ram (
-   Id_INFO_COLLECTE INTEGER,
-   Id_TYPE_RAM INTEGER,
-   PRIMARY KEY(Id_INFO_COLLECTE, Id_TYPE_RAM),
-   FOREIGN KEY(Id_INFO_COLLECTE) REFERENCES client_a_2.info_collecte(Id_INFO_COLLECTE),
    FOREIGN KEY(Id_TYPE_RAM) REFERENCES core_2.type_ram(Id_TYPE_RAM)
 );
 
@@ -245,7 +187,7 @@ CREATE TABLE client_b_2.date_collecte (
    Id_INFO_COLLECTE INTEGER NOT NULL,
    Id_Personne INTEGER NOT NULL,
    PRIMARY KEY(Id_Date_collecte),
-   FOREIGN KEY(Id_INFO_COLLECTE) REFERENCES client_a_2.info_collecte(Id_INFO_COLLECTE),
+   FOREIGN KEY(Id_INFO_COLLECTE) REFERENCES client_b_2.info_collecte(Id_INFO_COLLECTE),
    FOREIGN KEY(Id_Personne) REFERENCES core_2.personne(Id_Personne)
 );
 
