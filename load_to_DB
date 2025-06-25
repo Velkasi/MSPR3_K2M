@@ -5,7 +5,7 @@ import psycopg2
 conn = psycopg2.connect(
     host="127.0.0.1",
     user="export",
-    password="Btssio89$",
+    password="Btssio89",
     dbname="NFL_2",
     port=5432
 )
