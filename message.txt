@@ -4,97 +4,70 @@ CREATE SCHEMA IF NOT EXISTS client_b_2;
 CREATE SCHEMA IF NOT EXISTS nfl_schema_2;
 
 -- === Schéma : core_2 ===
-CREATE TABLE core_2.t_application_2 (
-   Id_APPLICATION SERIAL,
-   Version_OS_Appli VARCHAR(50),
-   PRIMARY KEY(Id_APPLICATION)
-);
-
-CREATE TABLE core_2.t_technicien_2 (
-   Id_TECHNICIEN SERIAL,
-   Nom_technicien VARCHAR(100),
-   Prenom_technicien VARCHAR(100),
-   PRIMARY KEY(Id_TECHNICIEN)
-);
-
-CREATE TABLE core_2.t_type_disques_2 (
-   Id_TYPE_DISQUES SERIAL,
-   Type_disques_clients VARCHAR(50),
-   PRIMARY KEY(Id_TYPE_DISQUES)
-);
-
-CREATE TABLE core_2.t_taille_disques_2 (
-   Id_TAILLE_DISQUES SERIAL,
-   Taille_disques_client VARCHAR(50),
-   PRIMARY KEY(Id_TAILLE_DISQUES)
-);
-
-CREATE TABLE core_2.t_personne_2 (
-   Id_Personne SERIAL,
-   Nom VARCHAR(50),
-   Prenom VARCHAR(50),
-   PRIMARY KEY(Id_Personne)
-);
-
 CREATE TABLE core_2.t_adresse_2 (
-   Id_ADRESSE SERIAL,
+   Id_ADRESSE SERIAL PRIMARY KEY,
    Voie VARCHAR(50),
    N_Voie VARCHAR(50),
    CP VARCHAR(50),
-   Ville VARCHAR(50),
-   PRIMARY KEY(Id_ADRESSE)
+   Ville VARCHAR(50)
+);
+
+CREATE TABLE core_2.t_personne_2 (
+   Id_Personne SERIAL PRIMARY KEY,
+   Nom VARCHAR(50),
+   Prenom VARCHAR(50)
+);
+
+CREATE TABLE core_2.t_application_2 (
+   Id_APPLICATION SERIAL PRIMARY KEY,
+   Version_OS_Appli VARCHAR(50)
+);
+
+CREATE TABLE core_2.t_technicien_2 (
+   Id_TECHNICIEN SERIAL PRIMARY KEY,
+   Nom_technicien VARCHAR(100),
+   Prenom_technicien VARCHAR(100)
 );
 
 CREATE TABLE core_2.t_type_os_2 (
-   Id_TYPE_OS SERIAL,
+   Id_TYPE_OS SERIAL PRIMARY KEY,
    Type_d_OS VARCHAR(50),
-   Version_OS VARCHAR(50),
-   PRIMARY KEY(Id_TYPE_OS)
+   Version_OS VARCHAR(50)
 );
 
 CREATE TABLE core_2.t_type_ram_2 (
-   Id_TYPE_RAM SERIAL,
-   Nb_RAM VARCHAR(50),
-   PRIMARY KEY(Id_TYPE_RAM)
+   Id_TYPE_RAM SERIAL PRIMARY KEY,
+   Nb_RAM VARCHAR(50)
 );
 
--- === Schéma : nfl_schema_2 ===
-CREATE TABLE nfl_schema_2.t_franchise_2 (
-   Id_FRANCHISE SERIAL,
-   Nom_Franchise VARCHAR(50),
-   Id_ADRESSE INTEGER NOT NULL,
-   PRIMARY KEY(Id_FRANCHISE),
-   FOREIGN KEY(Id_ADRESSE) REFERENCES core_2.t_adresse_2(Id_ADRESSE)
+CREATE TABLE core_2.t_type_disques_2 (
+   Id_TYPE_DISQUES SERIAL PRIMARY KEY,
+   Type_disques_clients VARCHAR(50)
 );
 
-CREATE TABLE nfl_schema_2.tj_fait_parti_2 (
-   Id_FRANCHISE INTEGER,
-   Id_Personne INTEGER,
-   PRIMARY KEY(Id_FRANCHISE, Id_Personne),
-   FOREIGN KEY(Id_FRANCHISE) REFERENCES nfl_schema_2.t_franchise_2(Id_FRANCHISE),
-   FOREIGN KEY(Id_Personne) REFERENCES client_a_2.t_client_2(Id_Personne)
+CREATE TABLE core_2.t_taille_disques_2 (
+   Id_TAILLE_DISQUES SERIAL PRIMARY KEY,
+   Taille_disques_client VARCHAR(50)
 );
 
 -- === Schéma : client_a_2 ===
 CREATE TABLE client_a_2.t_client_2 (
-   Id_Personne INTEGER,
+   Id_Personne INTEGER PRIMARY KEY,
    AdresseMail_client VARCHAR(50),
-   PRIMARY KEY(Id_Personne),
    FOREIGN KEY(Id_Personne) REFERENCES core_2.t_personne_2(Id_Personne)
 );
 
 CREATE TABLE client_a_2.t_prestataire_2 (
-   Id_Personne INTEGER,
+   Id_Personne INTEGER PRIMARY KEY,
    Nom_societe VARCHAR(100),
    SIRET NUMERIC(20,0),
    Id_ADRESSE INTEGER NOT NULL,
-   PRIMARY KEY(Id_Personne),
    FOREIGN KEY(Id_Personne) REFERENCES core_2.t_personne_2(Id_Personne),
    FOREIGN KEY(Id_ADRESSE) REFERENCES core_2.t_adresse_2(Id_ADRESSE)
 );
 
 CREATE TABLE client_a_2.t_instance_2 (
-   Id_INSTANCE SERIAL,
+   Id_INSTANCE SERIAL PRIMARY KEY,
    Adresse_ip_client VARCHAR(50),
    Adresse_ip_instance VARCHAR(50),
    Adresse_MAC VARCHAR(50),
@@ -105,28 +78,25 @@ CREATE TABLE client_a_2.t_instance_2 (
    Redemarrage_manuel BOOLEAN,
    Id_TYPE_OS INTEGER NOT NULL,
    Id_TECHNICIEN INTEGER NOT NULL,
-   PRIMARY KEY(Id_INSTANCE),
    UNIQUE(Id_TYPE_OS),
    FOREIGN KEY(Id_TYPE_OS) REFERENCES core_2.t_type_os_2(Id_TYPE_OS),
    FOREIGN KEY(Id_TECHNICIEN) REFERENCES core_2.t_technicien_2(Id_TECHNICIEN)
 );
 
 CREATE TABLE client_a_2.t_licence_2 (
-   Id_LICENCE SERIAL,
+   Id_LICENCE SERIAL PRIMARY KEY,
    Numero_licences SMALLINT,
    Id_APPLICATION INTEGER NOT NULL,
    Id_INSTANCE INTEGER NOT NULL,
-   PRIMARY KEY(Id_LICENCE),
    FOREIGN KEY(Id_APPLICATION) REFERENCES core_2.t_application_2(Id_APPLICATION),
    FOREIGN KEY(Id_INSTANCE) REFERENCES client_a_2.t_instance_2(Id_INSTANCE)
 );
 
 CREATE TABLE client_a_2.t_contrat_2 (
-   Id_CONTRAT SERIAL,
+   Id_CONTRAT SERIAL PRIMARY KEY,
    Duree_contrat VARCHAR(50),
    Id_Date_contrat DATE NOT NULL,
    Id_Personne INTEGER NOT NULL,
-   PRIMARY KEY(Id_CONTRAT),
    FOREIGN KEY(Id_Personne) REFERENCES client_a_2.t_prestataire_2(Id_Personne)
 );
 
@@ -163,90 +133,18 @@ CREATE TABLE client_a_2.tj_contient_ram_2 (
    FOREIGN KEY(Id_TYPE_RAM) REFERENCES core_2.t_type_ram_2(Id_TYPE_RAM)
 );
 
--- === Schéma : client_b_2 (copie identique de client_a_2) ===
-CREATE TABLE client_b_2.t_client_2 (
-   Id_Personne INTEGER,
-   AdresseMail_client VARCHAR(50),
-   PRIMARY KEY(Id_Personne),
-   FOREIGN KEY(Id_Personne) REFERENCES core_2.t_personne_2(Id_Personne)
-);
-
-CREATE TABLE client_b_2.t_prestataire_2 (
-   Id_Personne INTEGER,
-   Nom_societe VARCHAR(100),
-   SIRET NUMERIC(20,0),
+-- === Schéma : nfl_schema_2 ===
+CREATE TABLE nfl_schema_2.t_franchise_2 (
+   Id_FRANCHISE SERIAL PRIMARY KEY,
+   Nom_Franchise VARCHAR(50),
    Id_ADRESSE INTEGER NOT NULL,
-   PRIMARY KEY(Id_Personne),
-   FOREIGN KEY(Id_Personne) REFERENCES core_2.t_personne_2(Id_Personne),
    FOREIGN KEY(Id_ADRESSE) REFERENCES core_2.t_adresse_2(Id_ADRESSE)
 );
 
-CREATE TABLE client_b_2.t_instance_2 (
-   Id_INSTANCE SERIAL,
-   Adresse_ip_client VARCHAR(50),
-   Adresse_ip_instance VARCHAR(50),
-   Adresse_MAC VARCHAR(50),
-   CPU_Client VARCHAR(50),
-   Etat_instance BOOLEAN,
-   NB_Requete_client VARCHAR(50),
-   Date_Redemarrage TIMESTAMP,
-   Redemarrage_manuel BOOLEAN,
-   Id_TYPE_OS INTEGER NOT NULL,
-   Id_TECHNICIEN INTEGER NOT NULL,
-   PRIMARY KEY(Id_INSTANCE),
-   UNIQUE(Id_TYPE_OS),
-   FOREIGN KEY(Id_TYPE_OS) REFERENCES core_2.t_type_os_2(Id_TYPE_OS),
-   FOREIGN KEY(Id_TECHNICIEN) REFERENCES core_2.t_technicien_2(Id_TECHNICIEN)
-);
-
-CREATE TABLE client_b_2.t_licence_2 (
-   Id_LICENCE SERIAL,
-   Numero_licences SMALLINT,
-   Id_APPLICATION INTEGER NOT NULL,
-   Id_INSTANCE INTEGER NOT NULL,
-   PRIMARY KEY(Id_LICENCE),
-   FOREIGN KEY(Id_APPLICATION) REFERENCES core_2.t_application_2(Id_APPLICATION),
-   FOREIGN KEY(Id_INSTANCE) REFERENCES client_b_2.t_instance_2(Id_INSTANCE)
-);
-
-CREATE TABLE client_b_2.t_contrat_2 (
-   Id_CONTRAT SERIAL,
-   Duree_contrat VARCHAR(50),
-   Id_Date_contrat DATE NOT NULL,
-   Id_Personne INTEGER NOT NULL,
-   PRIMARY KEY(Id_CONTRAT),
-   FOREIGN KEY(Id_Personne) REFERENCES client_b_2.t_prestataire_2(Id_Personne)
-);
-
-CREATE TABLE client_b_2.tj_recupere_2 (
-   Id_INSTANCE INTEGER,
+CREATE TABLE nfl_schema_2.tj_fait_parti_2 (
+   Id_FRANCHISE INTEGER,
    Id_Personne INTEGER,
-   Id_Date_collecte DATE,
-   PRIMARY KEY(Id_INSTANCE, Id_Personne, Id_Date_collecte),
-   FOREIGN KEY(Id_INSTANCE) REFERENCES client_b_2.t_instance_2(Id_INSTANCE),
-   FOREIGN KEY(Id_Personne) REFERENCES core_2.t_personne_2(Id_Personne)
-);
-
-CREATE TABLE client_b_2.tj_contient_type_2 (
-   Id_INSTANCE INTEGER,
-   Id_TYPE_DISQUES INTEGER,
-   PRIMARY KEY(Id_INSTANCE, Id_TYPE_DISQUES),
-   FOREIGN KEY(Id_INSTANCE) REFERENCES client_b_2.t_instance_2(Id_INSTANCE),
-   FOREIGN KEY(Id_TYPE_DISQUES) REFERENCES core_2.t_type_disques_2(Id_TYPE_DISQUES)
-);
-
-CREATE TABLE client_b_2.tj_contient_taille_2 (
-   Id_INSTANCE INTEGER,
-   Id_TAILLE_DISQUES INTEGER,
-   PRIMARY KEY(Id_INSTANCE, Id_TAILLE_DISQUES),
-   FOREIGN KEY(Id_INSTANCE) REFERENCES client_b_2.t_instance_2(Id_INSTANCE),
-   FOREIGN KEY(Id_TAILLE_DISQUES) REFERENCES core_2.t_taille_disques_2(Id_TAILLE_DISQUES)
-);
-
-CREATE TABLE client_b_2.tj_contient_ram_2 (
-   Id_INSTANCE INTEGER,
-   Id_TYPE_RAM INTEGER,
-   PRIMARY KEY(Id_INSTANCE, Id_TYPE_RAM),
-   FOREIGN KEY(Id_INSTANCE) REFERENCES client_b_2.t_instance_2(Id_INSTANCE),
-   FOREIGN KEY(Id_TYPE_RAM) REFERENCES core_2.t_type_ram_2(Id_TYPE_RAM)
+   PRIMARY KEY(Id_FRANCHISE, Id_Personne),
+   FOREIGN KEY(Id_FRANCHISE) REFERENCES nfl_schema_2.t_franchise_2(Id_FRANCHISE),
+   FOREIGN KEY(Id_Personne) REFERENCES client_a_2.t_client_2(Id_Personne)
 );
