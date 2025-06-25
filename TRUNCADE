@@ -1,0 +1,8 @@
+TRUNCATE TABLE
+    client_a_2.TJ_recupere_2,
+    client_a_2.T_INSTANCE_2,
+    core_2.T_TYPE_OS_2,
+    core_2.T_TECHNICIEN_2,
+    core_2.T_ADRESSE_2,
+    core_2.T_PERSONNE_2
+RESTART IDENTITY CASCADE;
