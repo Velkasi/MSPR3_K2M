@@ -1,0 +1,43 @@
+import random
+import pandas as pd
+from faker import Faker
+
+fake = Faker('fr_FR')
+
+# core_2.T_PERSONNE_2
+def generate_personnes(nb):
+    return pd.DataFrame([{
+        "Nom": fake.last_name(),
+        "Prenom": fake.first_name()
+    } for _ in range(nb)])
+
+# core_2.T_ADRESSE_2
+def generate_adresses(nb):
+    return pd.DataFrame([{
+        "Voie": fake.street_name(),
+        "N_Voie": fake.building_number(),
+        "CP": fake.postcode(),
+        "Ville": fake.city()
+    } for _ in range(nb)])
+
+# core_2.T_TECHNICIEN_2
+def generate_techniciens(nb):
+    return pd.DataFrame([{
+        "Nom_technicien": fake.last_name(),
+        "Prenom_technicien": fake.first_name()
+    } for _ in range(nb)])
+
+# core_2.T_TYPE_OS_2
+def generate_type_os(nb):
+    return pd.DataFrame([{
+        "Type_d_OS": random.choice(["Windows", "Linux", "macOS"]),
+        "Version_OS": f"{random.randint(1, 11)}.{random.randint(0, 9)}"
+    } for _ in range(nb)])
+
+# Génération
+generate_personnes(100).to_csv("core_2.T_PERSONNE_2.csv", index=False)
+generate_adresses(50).to_csv("core_2.T_ADRESSE_2.csv", index=False)
+generate_techniciens(20).to_csv("core_2.T_TECHNICIEN_2.csv", index=False)
+generate_type_os(10).to_csv("core_2.T_TYPE_OS_2.csv", index=False)
+
+print("Fichiers générés avec succès.")
