@@ -1,7 +1,6 @@
 import random
 import pandas as pd
 from faker import Faker
-from datetime import timedelta, datetime
 
 fake = Faker('fr_FR')
 
@@ -35,14 +34,6 @@ def generate_type_os(nb):
         "Version_OS": f"{random.randint(1, 11)}.{random.randint(0, 9)}"
     } for _ in range(nb)])
 
-# client_a_2.T_INCIDENT_2
-def generate_incidents(nb, instance_ids):
-    return pd.DataFrame([{
-        "Id_INSTANCE": random.choice(instance_ids),
-        "Date_incident": fake.date_time_between(start_date="-1y", end_date="now"),
-        "Description": fake.sentence(nb_words=6)
-    } for _ in range(nb)])
-
 # client_a_2.T_CONTRAT_2
 def generate_contrats(nb, prestataires_ids):
     contrats = []
@@ -56,14 +47,12 @@ def generate_contrats(nb, prestataires_ids):
         })
     return pd.DataFrame(contrats)
 
-# client_a_2.T_INSTALLATION_2
-def generate_installations(nb, instance_ids, technicien_ids, client_ids):
+# client_a_2.TJ_recupere_2
+def generate_recuperations(nb, instance_ids, personne_ids):
     return pd.DataFrame([{
         "Id_INSTANCE": random.choice(instance_ids),
-        "Id_TECHNICIEN": random.choice(technicien_ids),
-        "Id_CLIENT": random.choice(client_ids),
-        "Date_installation": fake.date_between(start_date='-3y', end_date='today'),
-        "Duree_installation": f"{random.randint(1, 5)} heures"
+        "Id_Personne": random.choice(personne_ids),
+        "Id_Date_collecte": fake.date_between(start_date='-1y', end_date='today')
     } for _ in range(nb)])
 
 # Génération de données de base
@@ -72,14 +61,12 @@ generate_adresses(50).to_csv("core_2.T_ADRESSE_2.csv", index=False)
 generate_techniciens(20).to_csv("core_2.T_TECHNICIEN_2.csv", index=False)
 generate_type_os(10).to_csv("core_2.T_TYPE_OS_2.csv", index=False)
 
-# Génération données supplémentaires
+# Génération données liées
 instance_ids = list(range(1, 51))
-technicien_ids = list(range(1, 21))
-client_ids = list(range(1, 51))
+personne_ids = list(range(1, 101))
 prestataire_ids = list(range(1, 30))
 
-generate_incidents(100, instance_ids).to_csv("client_a_2.T_INCIDENT_2.csv", index=False)
 generate_contrats(50, prestataire_ids).to_csv("client_a_2.T_CONTRAT_2.csv", index=False)
-generate_installations(50, instance_ids, technicien_ids, client_ids).to_csv("client_a_2.T_INSTALLATION_2.csv", index=False)
+generate_recuperations(100, instance_ids, personne_ids).to_csv("client_a_2.TJ_recupere_2.csv", index=False)
 
-print("Toutes les données ont été générées.")
+print("Toutes les données ont été générées sans T_INCIDENT_2 ni T_INSTALLATION_2.")
