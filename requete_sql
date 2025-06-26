@@ -1,0 +1,17 @@
+SELECT
+    t_instance_2.adresse_ip_instance,
+    t_contrat_2.duree_contrat,
+    t_personne_2.nom,
+    t_personne_2.prenom
+FROM
+    client_a_2.t_instance_2
+JOIN
+    client_a_2.t_contrat_2
+    ON t_instance_2.id_technicien = t_contrat_2.id_personne
+JOIN
+    core_2.t_personne_2
+    ON t_contrat_2.id_personne = t_personne_2.id_personne
+WHERE
+    t_contrat_2.id_date_contrat +
+    CAST(SPLIT_PART(t_contrat_2.duree_contrat, ' ', 1) || ' months' AS INTERVAL)
+    < CURRENT_DATE;
