@@ -1,96 +1,99 @@
 -- Liste des instances d’un client prestataire donné
 
 SELECT
-    t_instance_2.adresse_ip_instance,
-    t_personne_2.nom,
-    t_personne_2.prenom
+    T_INSTANCE.Adresse_ip_instance,
+    T_PERSONNE.Nom,
+    T_PERSONNE.Prenom
 
-FROM client_a_2.t_instance_2
+FROM T_INSTANCE
 
-JOIN client_a_2.tj_recupere_2
-  ON t_instance_2.id_instance = tj_recupere_2.id_instance
+JOIN TJ_recupere
+  ON T_INSTANCE.Id_INSTANCE = TJ_recupere.Id_INSTANCE
 
-JOIN core_2.t_personne_2
-  ON tj_recupere_2.id_personne = t_personne_2.id_personne
+JOIN T_PERSONNE
+  ON TJ_recupere.Id_Personne = T_PERSONNE.Id_Personne
 
-WHERE t_personne_2.nom = 'NomPrestataire';  -- Remplace par le nom du prestataire
+WHERE T_PERSONNE.Nom = 'Dupont';  -- Remplace par le nom du prestataire
 
+-- Liste des incidents pour une instance donnée
 
---  Liste des incidents pour une instance donnée
-
-SELECT
-    t_instance_2.adresse_ip_instance,
-    tj_recupere_2.id_date_collecte,
-    t_personne_2.nom,
-    t_personne_2.prenom
-
-FROM client_a_2.tj_recupere_2
-
-JOIN client_a_2.t_instance_2
-  ON t_instance_2.id_instance = tj_recupere_2.id_instance
-
-JOIN core_2.t_personne_2
-  ON tj_recupere_2.id_personne = t_personne_2.id_personne
-
-WHERE t_instance_2.id_instance = 1
-
---  Liste des instances qui n’ont jamais été redémarrées manuellement
 
 SELECT
-    t_instance_2.adresse_ip_instance,
-    t_instance_2.cpu_client,
-    t_instance_2.redemarrage_manuel
+    T_INSTANCE.Adresse_ip_instance,
+    T_PERSONNE.Nom,
+    T_PERSONNE.Prenom,
+    TJ_recupere.Id_Date_collecte
 
-FROM client_a_2.t_instance_2
+FROM TJ_recupere
 
-WHERE t_instance_2.redemarrage_manuel = FALSE;
+JOIN T_INSTANCE
+  ON TJ_recupere.Id_INSTANCE = T_INSTANCE.Id_INSTANCE
 
--- Liste des instances d’un client prestataire dont le contrat est expiré
+JOIN T_PERSONNE
+  ON TJ_recupere.Id_Personne = T_PERSONNE.Id_Personne
+
+WHERE T_INSTANCE.Id_INSTANCE = 1;  -- Remplace par l'ID de l'instance
+
+-- Liste des instances qui n’ont jamais été redémarrées manuellement
+
 
 SELECT
-    t_instance_2.adresse_ip_instance,
-    t_contrat_2.duree_contrat,
-    t_contrat_2.id_date_contrat,
-    t_personne_2.nom,
-    t_personne_2.prenom,
-    tj_recupere_2.id_date_collecte
+    Adresse_ip_instance,
+    CPU_Client,
+    Redemarrage_manuel
 
-FROM client_a_2.t_instance_2
+FROM T_INSTANCE
 
-JOIN client_a_2.tj_recupere_2
-  ON t_instance_2.id_instance = tj_recupere_2.id_instance
+WHERE Redemarrage_manuel = FALSE;
 
-JOIN client_a_2.t_contrat_2
-  ON tj_recupere_2.id_personne = t_contrat_2.id_personne
 
-JOIN core_2.t_personne_2
-  ON t_contrat_2.id_personne = t_personne_2.id_personne
+-- Instances d’un client prestataire dont le contrat est expiré
+
+
+SELECT
+    T_INSTANCE.Adresse_ip_instance,
+    T_CONTRAT.Duree_contrat,
+    T_CONTRAT.Id_Date_contrat,
+    T_PERSONNE.Nom,
+    T_PERSONNE.Prenom,
+    TJ_recupere.Id_Date_collecte
+
+FROM T_INSTANCE
+
+JOIN TJ_recupere
+  ON T_INSTANCE.Id_INSTANCE = TJ_recupere.Id_INSTANCE
+
+JOIN T_CONTRAT
+  ON TJ_recupere.Id_Personne = T_CONTRAT.Id_Personne
+
+JOIN T_PERSONNE
+  ON T_CONTRAT.Id_Personne = T_PERSONNE.Id_Personne
 
 WHERE
-    t_contrat_2.id_date_contrat +
-    CAST(SPLIT_PART(t_contrat_2.duree_contrat, ' ', 1) || ' months' AS INTERVAL)
+    T_CONTRAT.Id_Date_contrat +
+    CAST(SPLIT_PART(T_CONTRAT.Duree_contrat, ' ', 1) || ' months' AS INTERVAL)
     < CURRENT_DATE;
 
--- Historique des installations pour une instance donnée : technicien, client final, date d’installation et durée 
+-- Historique des installations pour une instance donnée
+
 
 SELECT
-    t_instance_2.adresse_ip_instance,
-    t_technicien_2.nom_technicien,
-    t_technicien_2.prenom_technicien,
-    t_personne_2.nom,
-    t_personne_2.prenom,
-    tj_recupere_2.id_date_collecte
+    T_INSTANCE.Adresse_ip_instance,
+    T_TECHNICIEN.Nom_technicien,
+    T_TECHNICIEN.Prenom_technicien,
+    T_PERSONNE.Nom,
+    T_PERSONNE.Prenom,
+    TJ_recupere.Id_Date_collecte
 
-FROM client_a_2.t_instance_2
+FROM T_INSTANCE
 
-JOIN core_2.t_technicien_2
-  ON t_instance_2.id_technicien = t_technicien_2.id_technicien
+JOIN T_TECHNICIEN
+  ON T_INSTANCE.Id_TECHNICIEN = T_TECHNICIEN.Id_TECHNICIEN
 
-JOIN client_a_2.tj_recupere_2
-  ON t_instance_2.id_instance = tj_recupere_2.id_instance
+JOIN TJ_recupere
+  ON T_INSTANCE.Id_INSTANCE = TJ_recupere.Id_INSTANCE
 
-JOIN core_2.t_personne_2
-  ON tj_recupere_2.id_personne = t_personne_2.id_personne
+JOIN T_PERSONNE
+  ON TJ_recupere.Id_Personne = T_PERSONNE.Id_Personne
 
-WHERE t_instance_2.id_instance = 1;  -- Remplace par l’ID de l’instance concernée
-
+WHERE T_INSTANCE.Id_INSTANCE = 1;  -- À adapter
