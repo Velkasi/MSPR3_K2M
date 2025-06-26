@@ -1,0 +1,25 @@
+import pandas as pd
+import psycopg2
+
+conn = psycopg2.connect(
+    host="127.0.0.1",
+    user="export",
+    password="Btssio89",
+    dbname="NFL_2",
+    port=5432
+)
+cursor = conn.cursor()
+
+def insert_data(file, table, columns):
+    df = pd.read_csv(file)
+    for _, row in df.iterrows():
+        values = tuple(row[col] for col in columns)
+        sql = f"INSERT INTO {table} ({','.join(columns)}) VALUES ({','.join(['%s']*len(columns))})"
+        cursor.execute(sql, values)
+    conn.commit()
+    print(f"{table} inséré.")
+
+insert_data("client_a_2.T_CONTRAT_2.csv", "client_a_2.T_CONTRAT_2", ["duree_contrat", "id_date_contrat", "id_personne"])
+
+cursor.close()
+conn.close()
