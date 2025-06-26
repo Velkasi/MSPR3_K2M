@@ -1,3 +1,52 @@
+-- Liste des instances d’un client prestataire donné
+
+SELECT
+    t_instance_2.adresse_ip_instance,
+    t_personne_2.nom,
+    t_personne_2.prenom
+
+FROM client_a_2.t_instance_2
+
+JOIN client_a_2.tj_recupere_2
+  ON t_instance_2.id_instance = tj_recupere_2.id_instance
+
+JOIN core_2.t_personne_2
+  ON tj_recupere_2.id_personne = t_personne_2.id_personne
+
+WHERE t_personne_2.nom = 'NomPrestataire';  -- Remplace par le nom du prestataire
+
+
+--  Liste des incidents pour une instance donnée
+
+SELECT
+    t_instance_2.adresse_ip_instance,
+    tj_recupere_2.id_date_collecte,
+    t_personne_2.nom,
+    t_personne_2.prenom
+
+FROM client_a_2.tj_recupere_2
+
+JOIN client_a_2.t_instance_2
+  ON t_instance_2.id_instance = tj_recupere_2.id_instance
+
+JOIN core_2.t_personne_2
+  ON tj_recupere_2.id_personne = t_personne_2.id_personne
+
+WHERE t_instance_2.id_instance = 1
+
+--  Liste des instances qui n’ont jamais été redémarrées manuellement
+
+SELECT
+    t_instance_2.adresse_ip_instance,
+    t_instance_2.cpu_client,
+    t_instance_2.redemarrage_manuel
+
+FROM client_a_2.t_instance_2
+
+WHERE t_instance_2.redemarrage_manuel = FALSE;
+
+-- Liste des instances d’un client prestataire dont le contrat est expiré
+
 SELECT
     t_instance_2.adresse_ip_instance,
     t_contrat_2.duree_contrat,
@@ -22,28 +71,26 @@ WHERE
     CAST(SPLIT_PART(t_contrat_2.duree_contrat, ' ', 1) || ' months' AS INTERVAL)
     < CURRENT_DATE;
 
- Historique des installations pour une instance donnée : technicien, client final, date d’installation et durée 
+-- Historique des installations pour une instance donnée : technicien, client final, date d’installation et durée 
 
 SELECT
     t_instance_2.adresse_ip_instance,
-    t_contrat_2.duree_contrat,
-    t_contrat_2.id_date_contrat,
+    t_technicien_2.nom_technicien,
+    t_technicien_2.prenom_technicien,
     t_personne_2.nom,
     t_personne_2.prenom,
     tj_recupere_2.id_date_collecte
 
 FROM client_a_2.t_instance_2
 
+JOIN core_2.t_technicien_2
+  ON t_instance_2.id_technicien = t_technicien_2.id_technicien
+
 JOIN client_a_2.tj_recupere_2
   ON t_instance_2.id_instance = tj_recupere_2.id_instance
 
-JOIN client_a_2.t_contrat_2
-  ON tj_recupere_2.id_personne = t_contrat_2.id_personne
-
 JOIN core_2.t_personne_2
-  ON t_contrat_2.id_personne = t_personne_2.id_personne
+  ON tj_recupere_2.id_personne = t_personne_2.id_personne
 
-WHERE
-    t_contrat_2.id_date_contrat +
-    CAST(SPLIT_PART(t_contrat_2.duree_contrat, ' ', 1) || ' months' AS INTERVAL)
-    < CURRENT_DATE;
+WHERE t_instance_2.id_instance = 1;  -- Remplace par l’ID de l’instance concernée
+
