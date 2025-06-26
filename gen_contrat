@@ -1,0 +1,16 @@
+import random
+import pandas as pd
+from faker import Faker
+
+fake = Faker('fr_FR')
+
+def generate_contrats(nb, ids_personne):
+    return pd.DataFrame([{
+        "duree_contrat": f"{random.randint(6, 24)} mois",
+        "id_date_contrat": fake.date_between(start_date='-2y', end_date='-1d'),
+        "id_personne": random.choice(ids_personne)
+    } for _ in range(nb)])
+
+# Simulation pour 40 contrats sur 100 personnes
+generate_contrats(40, list(range(1, 101))).to_csv("client_a_2.T_CONTRAT_2.csv", index=False)
+print("Contrats générés.")
